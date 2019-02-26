@@ -1,0 +1,6 @@
+cat AND dog
+watermelon OR zebra
+cat AND watermelon OR zebra
+cat OR watermelon AND dog
+(cat OR watermelon) AND dog
+NOT cat AND dog
