@@ -59,11 +59,11 @@ def executeOptimizedSearch(queryString, term_dict, postings):
             operand2 = operandsStack.pop()
             finalOperand = None
 
-            if isinstance(operand1, CombinedTerm) and operand1.getOperation == "and":
+            if isinstance(operand1, CombinedTerm) and operand1.getOperation() == "and":
                 finalCombinedTerm = operand1.addNewTerm(operand2)
-            elif isinstance(operand2, CombinedTerm) and operand2.getOperation == "and":
-                finalCombinedTerm = operand1.addNewTerm(operand1)
-            if finalOperand is None:
+            elif isinstance(operand2, CombinedTerm) and operand2.getOperation() == "and":
+                finalCombinedTerm = operand2.addNewTerm(operand1)
+            else:
                 finalCombinedTerm = CombinedTerm("and")
                 finalCombinedTerm.addNewTerm(operand1)
                 finalCombinedTerm.addNewTerm(operand2)
