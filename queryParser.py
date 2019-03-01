@@ -4,7 +4,7 @@ import booleanOperations
 from nltk.stem.porter import PorterStemmer
 
 stemmer = PorterStemmer()
-operatorPriority = {'NOT': 2, 'AND': 1, 'OR': 0, '(': -1}
+operatorPriority = {'not': 2, 'and': 1, 'or': 0, '(': -1}
 
 def isOperator(op):
     return op in operatorPriority or op == ')' or op == "("
@@ -47,7 +47,7 @@ def removeRedundantBrackets(queryList):
                 else:
                     validBracket = False
                 openBracketPos = x
-            elif token == 'OR':
+            elif token == 'or':
                 validBracket = True
             elif token == ')':
                 if not validBracket:
@@ -70,7 +70,7 @@ def removeRedundantBrackets(queryList):
                 withinBrackets = True
                 openBracketPos = x
 
-        if token == 'NOT':
+        if token == 'not':
             hasNotOperator = True
         else:
             hasNotOperator = False
@@ -94,7 +94,7 @@ def queryStringToPostFixList(queryString):
     output = []
     operatorStack = []
     spacedOutString = insertSpaceBeforeAndAfterBrackets(queryString)
-    tokenizedString = [word if isOperator(word) else stemmer.stem(word.lower()) for word in spacedOutString.split()]
+    tokenizedString = [word.lower() if isOperator(word) else stemmer.stem(word.lower()) for word in spacedOutString.split()]
     for token in tokenizedString:
         if isOperator(token):
             if token == '(':

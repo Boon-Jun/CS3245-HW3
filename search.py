@@ -40,4 +40,7 @@ postings = open(postings_file, "r")
 
 for query in queriesFile:
     resultsList = searchLogic.executeSearch(query, term_dict, postings)
-    outputFile.write(', '.join(str(docId) for docId in resultsList) + '\n')
+    if type(resultsList) is list:
+        outputFile.write(', '.join(str(docId) for docId in resultsList) + '\n')
+    else:
+        outputFile.write('\n')
