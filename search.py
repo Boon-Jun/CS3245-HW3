@@ -39,7 +39,8 @@ term_dict = pickle.load(open(dictionary_file, "rb"))
 postings = open(postings_file, "r")
 
 for query in queriesFile:
-    resultsList = searchLogic.executeSearch(query, term_dict, postings)
+    #resultsList = searchLogic.executeBasicSearch(query, term_dict, postings)
+    resultsList = searchLogic.executeOptimizedSearch(query, term_dict, postings)
     if type(resultsList) is list:
         outputFile.write(', '.join(str(docId) for docId in resultsList) + '\n')
     else:
