@@ -115,4 +115,4 @@ def queryStringToPostFixList(queryString):
     while operatorStack:
         output.append(operatorStack[-1])
         operatorStack.pop()
-    return output
+    return output        
