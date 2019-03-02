@@ -28,3 +28,5 @@ for o, a in opts:
 if input_directory == None or output_file_postings == None or output_file_dictionary == None:
     usage()
     sys.exit(2)
+
+
