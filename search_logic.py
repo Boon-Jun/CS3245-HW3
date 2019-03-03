@@ -55,7 +55,6 @@ def executeOptimizedSearch(queryString, term_dict, postings):
 
     #Converts infix query string to list in postfix notation
     postfixList = queryStringToPostFixList(queryString)
-
     operandsStack = []
 
     #Process the query after converting it to postfix notation
@@ -73,9 +72,7 @@ def executeOptimizedSearch(queryString, term_dict, postings):
             # z = (NOT x) first and then y AND z since we can work with
             # smaller postings list.)
 
-            newCombinedTerm = CombinedTerm("not")
-            newCombinedTerm.addNewTerm(operand)
-            operandsStack.append(newCombinedTerm)
+            operandsStack.append(CombinedTerm("not").addNewTerm(operand))
         elif item == 'and':
             operand1 = operandsStack.pop()
             operand2 = operandsStack.pop()

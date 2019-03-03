@@ -9,6 +9,7 @@ class CombinedTerm():
 
     def addNewTerm(self, term):
         self.termsList.append(term)
+        return self
 
     def getOperation(self):
         return self.operation
