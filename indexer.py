@@ -7,8 +7,8 @@ import math
 
 def index(input_directory, output_file_dictionary, output_file_postings):
 	# all document ids sorted by id
-	doc_ids = [d for d in listdir(input_directory) if isfile(join(input_directory, d))]
-	doc_ids.sort(key=lambda a: int(a))
+	doc_ids = [int(d) for d in listdir(input_directory) if isfile(join(input_directory, d))]
+	doc_ids.sort()
 	# Every term in the dictionary is mapped to a tuple (byte_offset, doc_freq)
 	dictionary = {}
 	# Every term in the index is mapped to a postings list
@@ -18,7 +18,7 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 	# in dictionary and index
 	for doc_id in doc_ids:
 		# tokenize casefold the text in document 
-		doc = open(join(input_directory, doc_id), "r")	
+		doc = open(join(input_directory, str(doc_id)), "r")	
 		text = doc.read()
 		sentences = [sentence for sentence in sent_tokenize(text)]
 		tokens = []
@@ -37,7 +37,7 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 				dictionary[term] = (None, dictionary[term][1] + 1)
 				index[term].append(doc_id)
 
-	# Add skip pointers to every posting
+	# Add skip pointers to every postings list
 	for term in index:
 		doc_freq = dictionary[term][1]
 		skip_pointers_count = int(math.sqrt(doc_freq))
