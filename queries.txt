@@ -26,3 +26,5 @@ power AND the
 power
 hot
 the
+NOT(the AND power)
+NOT(the AND power) OR (skill AND man OR cat)
