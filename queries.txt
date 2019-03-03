@@ -1,11 +1,19 @@
+cat
+dog
+watermelon
+zebra
 cat AND dog
 watermelon OR zebra
 cat AND watermelon OR zebra
 cat OR watermelon AND dog
 (cat OR watermelon) AND dog
 NOT cat AND dog
+not cat AND dog
+NOT cat and dog
+cat or cat
+cat OR cat
 watermelon AND cat
 NOT (dog) AND zebra AND watermelon AND cat
 not (dog) and zebra or watermelon and cat
 NOT (dog) AND zebra OR watermelon AND cat
-NOT cat
+power
