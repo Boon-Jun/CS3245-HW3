@@ -1,5 +1,5 @@
-from booleanOperations import notOp, andOp
-from searchUtils import *
+from boolean_operations import notOp, andOp
+from search_utils import *
 
 class CombinedTerm():
     """Cache query terms that have common boolean operation

@@ -1,6 +1,6 @@
 import re
 import nltk
-import booleanOperations
+import boolean_operations
 from nltk.stem.porter import PorterStemmer
 
 stemmer = PorterStemmer()
@@ -101,18 +101,15 @@ def queryStringToPostFixList(queryString):
                 operatorStack.append(token)
             elif token == ')':
                 while operatorStack and operatorStack[-1] != '(':
-                    output.append(operatorStack[-1])
-                    operatorStack.pop()
+                    output.append(operatorStack.pop())
                 if operatorStack[-1] == '(':
                     operatorStack.pop()
             else:
                 while operatorStack and compareOperators(token, operatorStack[-1]) != 1:
-                     output.append(operatorStack[-1])
-                     operatorStack.pop()
+                     output.append(operatorStack.pop())
                 operatorStack.append(token)
         else:
             output.append(token)
     while operatorStack:
-        output.append(operatorStack[-1])
-        operatorStack.pop()
-    return output        
+        output.append(operatorStack.pop())
+    return output

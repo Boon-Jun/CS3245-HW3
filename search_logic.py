@@ -1,7 +1,7 @@
-from queryParser import *
-from booleanOperations import *
-from searchUtils import *
-from AdvancedSearch import CombinedTerm
+from query_parser import *
+from boolean_operations import *
+from search_utils import *
+from advanced_search import CombinedTerm
 
 def executeBasicSearch(queryString, term_dict, postings):
     fullDict = getFullDict(postings)

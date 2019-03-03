@@ -4,7 +4,7 @@ import nltk
 import sys
 import getopt
 import pickle
-import searchLogic
+import search_logic
 
 def usage():
     print "usage: " + sys.argv[0] + " -d dictionary-file -p postings-file -q file-of-queries"
@@ -36,8 +36,8 @@ term_dict = pickle.load(open(dictionary_file, "rb"))
 postings = open(postings_file, "r")
 
 for query in queriesFile:
-    resultsList1 = searchLogic.executeBasicSearch(query, term_dict, postings)
-    resultsList2 = searchLogic.executeOptimizedSearch(query, term_dict, postings)
+    resultsList1 = search_logic.executeBasicSearch(query, term_dict, postings)
+    resultsList2 = search_logic.executeOptimizedSearch(query, term_dict, postings)
     if resultsList1 != resultsList2:
         print "Error with " + query
         print resultsList1

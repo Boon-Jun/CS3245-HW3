@@ -1,6 +1,6 @@
 import unittest
-import booleanOperations
-import queryParser
+import boolean_operations
+import query_parser
 
 def compactString(string):
     ''' A utility method that removes all white space'''
