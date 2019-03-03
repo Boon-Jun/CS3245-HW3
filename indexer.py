@@ -6,6 +6,7 @@ import pickle
 import math
 
 def index(input_directory, output_file_dictionary, output_file_postings):
+	# all document ids sorted by id
 	doc_ids = [d for d in listdir(input_directory) if isfile(join(input_directory, d))]
 	doc_ids.sort(key=lambda a: int(a))
 	# Every term in the dictionary is mapped to a tuple (byte_offset, doc_freq)
@@ -52,12 +53,13 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 	
 	# Write all document ids at top of postings file
 	postings_file.write(str(doc_ids) + '\n')	
-	
+	offset = postings_file.tell()
+
 	# Write index to postings file and corresponding
         # byte offset to dictionary file
 	for k in sorted_terms:
-		postings_file.write(str(index[k]) + '\n')
 		dictionary[k] = (offset,dictionary[k][1])
+		postings_file.write(str(index[k]) + '\n')
 		offset = postings_file.tell()
 	postings_file.flush()
 	
@@ -69,8 +71,3 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 	pickle.dump(dictionary, dictionary_file)		
 	dictionary_file.flush()
 	
-print(index("/home/a/ananda96/CS3245-HW2/test_docs","test_dictionary.txt", "test_postings.txt"))
-'''input_directory = "/home/a/ananda96/CS3245-HW2/test_docs"
-print(isfile(join(input_directory, "2")))
-doc_ids = [d for d in listdir(input_directory) if isfile(join(input_directory, d))]
-print(doc_ids)'''

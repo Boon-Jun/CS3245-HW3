@@ -3,6 +3,7 @@ import re
 import nltk
 import sys
 import getopt
+from indexer import index
 
 def usage():
     print "usage: " + sys.argv[0] + " -i directory-of-documents -d dictionary-file -p postings-file"
@@ -29,4 +30,8 @@ if input_directory == None or output_file_postings == None or output_file_dictio
     usage()
     sys.exit(2)
 
+index(input_directory, output_file_dictionary, output_file_postings)
+
+### Test code on smaller number of documents ###
+#print(index("./test_docs","test_dictionary.txt", "test_postings.txt"))
 
