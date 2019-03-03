@@ -12,6 +12,7 @@ not cat AND dog
 NOT cat and dog
 NOT cat
 NOT (NOT cat)
+NOT NOT cat
 cat or cat
 cat OR cat
 watermelon AND cat
