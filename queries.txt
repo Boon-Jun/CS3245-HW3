@@ -14,6 +14,8 @@ NOT cat
 NOT (NOT cat)
 cat or cat
 cat OR cat
+watermelon AND NOT CAT AND NOT DOG AND NOT ZEBRA
+NOT CAT AND NOT DOG AND NOT ZEBRA
 watermelon AND cat
 NOT (dog) AND zebra AND watermelon AND cat
 not (dog) and zebra or watermelon and cat
