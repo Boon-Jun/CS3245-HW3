@@ -17,13 +17,14 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 	# to the respective posting list in the index. If word is new, add new key 
 	# in dictionary and index
 	for doc_id in doc_ids:
-		# tokenize the text in document
+		# tokenize casefold the text in document 
 		doc = open(join(input_directory, doc_id), "r")	
 		text = doc.read()
 		sentences = [sentence for sentence in sent_tokenize(text)]
 		tokens = []
 		for sent in sentences:
-			tokens.extend([token for token in word_tokenize(sent)])	
+			tokens.extend([token.lower() for token in word_tokenize(sent)])	
+		
 		# stem the tokens
 		ps = nltk.stem.PorterStemmer()
 		stemmed_tokens = [ps.stem(token) for token in tokens]
