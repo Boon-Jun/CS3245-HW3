@@ -40,3 +40,6 @@ for query in queriesFile:
     resultsList2 = searchLogic.executeOptimizedSearch(query, term_dict, postings)
     if resultsList1 != resultsList2:
         print "Error with " + query
+        print resultsList1
+        print resultsList2
+        print "======================"
