@@ -36,7 +36,11 @@ def executeBasicSearch(queryString, term_dict, postings):
         else:
             operandsStack.append(item)
     if len(operandsStack) == 1:
-        return operandsStack[0]
+        if type(operandsStack[0]) is not list:
+        #To account for cases where no boolean operations are executed
+            return loadPostingList(operandsStack[0], term_dict, postings)
+        else:
+            return operandsStack[0]
     else:
         print("Invalid Query")
 
@@ -88,6 +92,9 @@ def executeOptimizedSearch(queryString, term_dict, postings):
     if len(operandsStack) == 1:
         if isinstance(operandsStack[0], CombinedTerm):
             return operandsStack[0].computeCombinedTerm(term_dict, postings)
+        elif type(operandsStack[0]) is not list:
+            #To account for cases where no boolean operations are executed
+            return [item[0] if type(item) is tuple else item for item in loadPostingList(operandsStack[0], term_dict, postings)]
         else:
             return operandsStack[0]
     else:
