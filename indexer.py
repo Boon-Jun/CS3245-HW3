@@ -1,15 +1,13 @@
-
 import nltk
 from nltk.tokenize import word_tokenize, sent_tokenize
 from os import listdir
 from os.path import join, isfile
 import pickle
 import math
-import io
-	
+
 def index(input_directory, output_file_dictionary, output_file_postings):
 	doc_ids = [d for d in listdir(input_directory) if isfile(join(input_directory, d))]
-	doc_ids.sort()
+	doc_ids.sort(key=lambda a: int(a))
 	# Every term in the dictionary is mapped to a tuple (byte_offset, doc_freq)
 	dictionary = {}
 	# Every term in the index is mapped to a postings list
@@ -19,10 +17,8 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 	# in dictionary and index
 	for doc_id in doc_ids:
 		# tokenize the text in document
-		#doc = open(join(input_directory, doc_id), "r")	
-		doc = io.open(join(input_directory, doc_id), 'rU', encoding='utf-8')
-		text = doc.read(0)
-
+		doc = open(join(input_directory, doc_id), "r")	
+		text = doc.read()
 		sentences = [sentence for sentence in sent_tokenize(text)]
 		tokens = []
 		for sent in sentences:
@@ -48,12 +44,17 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 			if i % skip_size == 0:
 				index[term][i] = (index[term][i], i + skip_size)
 
-	# Write index to postings file and corresponding
-        # byte offset to dictionary file
+	# Write dictionary and index
 	offset = 0
 	postings_file = open(output_file_postings, "w")
 	sorted_terms = dictionary.keys()
 	sorted_terms.sort()
+	
+	# Write all document ids at top of postings file
+	postings_file.write(str(doc_ids) + '\n')	
+	
+	# Write index to postings file and corresponding
+        # byte offset to dictionary file
 	for k in sorted_terms:
 		postings_file.write(str(index[k]) + '\n')
 		dictionary[k] = (offset,dictionary[k][1])
@@ -61,10 +62,8 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 	postings_file.flush()
 	
 	for k in sorted_terms:
-		print(k + " " + str(index[k]))
-	print("_______________________________________________________________")
-	for k in sorted_terms:
 		print(k + " " + str(dictionary[k]))
+
 	# Write dictionary to dictionary file			
 	dictionary_file = open(output_file_dictionary, "wb")
 	pickle.dump(dictionary, dictionary_file)		
