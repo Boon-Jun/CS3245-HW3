@@ -4,8 +4,7 @@ from searchUtils import *
 from AdvancedSearch import CombinedTerm
 
 def executeBasicSearch(queryString, term_dict, postings):
-    #Just a placeHolder to retrieve for full dictionary listings
-    fullDict = getFullDict()
+    fullDict = getFullDict(postings)
 
     postfixList = queryStringToPostFixList(queryString)
 

@@ -60,7 +60,7 @@ class CombinedTerm():
                 operand = term
             else:
                 operand = loadPostingList(term, term_dict, postings)
-            return notOp(getFullDict(), operand) if intermediateList is None else notOp(intermediateList, operand)
+            return notOp(getFullDict(postings), operand) if intermediateList is None else notOp(intermediateList, operand)
 
         else:
             print "InvalidCombinedTerm"

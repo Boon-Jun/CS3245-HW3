@@ -9,8 +9,9 @@ def loadPostingList(term, term_dict, postings):
     postings.seek(byteOffset)
     return ast.literal_eval(postings.readline().rstrip())
 
-def getFullDict():
-    return [x for x in range(1,10000)]
+def getFullDict(postings):
+    postings.seek(0)
+    return ast.literal_eval(postings.readline().rstrip())
 
 def getTermCount(term, term_dict):
     try:
