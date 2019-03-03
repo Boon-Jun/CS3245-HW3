@@ -2,8 +2,7 @@ from boolean_operations import notOp, andOp
 from search_utils import *
 
 class CombinedTerm():
-    """Cache query terms that have common boolean operation
-       for lazy calculation. """
+    """Stores query terms for lazy calculation"""
     def __init__(self, operation):
         self.operation = operation
         self.termsList = []
@@ -18,6 +17,8 @@ class CombinedTerm():
         return self.termsList
 
     def sortTermsList(self, term_dict):
+
+        #Sort the terms so that the smaller sized terms can be process first
         termCounts = []
         for term in self.termsList:
             if isinstance(term, CombinedTerm):
@@ -60,7 +61,7 @@ class CombinedTerm():
                 operand = term
             else:
                 operand = loadPostingList(term, term_dict, postings)
-            return notOp(getFullDict(postings), operand) if intermediateList is None else notOp(intermediateList, operand)
+            return notOp(getAllDocIds(postings), operand) if intermediateList is None else notOp(intermediateList, operand)
 
         else:
             print "InvalidCombinedTerm"

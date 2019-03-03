@@ -4,7 +4,8 @@ import nltk
 import sys
 import getopt
 import pickle
-import searchLogic
+import search_logic
+import time
 
 def usage():
     print "usage: " + sys.argv[0] + " -d dictionary-file -p postings-file -q file-of-queries -o output-file-of-results"
@@ -38,10 +39,13 @@ outputFile = open(file_of_output, "w")
 term_dict = pickle.load(open(dictionary_file, "rb"))
 postings = open(postings_file, "r")
 
+initialTime = time.time()
+
 for query in queriesFile:
-    #resultsList = searchLogic.executeBasicSearch(query, term_dict, postings)
-    resultsList = searchLogic.executeOptimizedSearch(query, term_dict, postings)
+    resultsList = search_logic.executeBasicSearch(query, term_dict, postings)
+    #resultsList = search_logic.executeOptimizedSearch(query, term_dict, postings)
     if type(resultsList) is list:
         outputFile.write(', '.join(str(docId) for docId in resultsList) + '\n')
     else:
         outputFile.write('\n')
+print "Execution Time: " + str(time.time() - initialTime) + "s"

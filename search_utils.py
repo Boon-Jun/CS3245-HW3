@@ -1,5 +1,7 @@
 import ast
 
+allDocIds = None
+
 def loadPostingList(term, term_dict, postings):
     byteOffset = 0
     try:
@@ -9,9 +11,14 @@ def loadPostingList(term, term_dict, postings):
     postings.seek(byteOffset)
     return ast.literal_eval(postings.readline().rstrip())
 
-def getFullDict(postings):
-    postings.seek(0)
-    return ast.literal_eval(postings.readline().rstrip())
+def getAllDocIds(postings):
+    global allDocIds
+    if allDocIds == None:
+        # Stores the list of all documents once, so that it is not required
+        # to load it again
+        postings.seek(0)
+        allDocIds = ast.literal_eval(postings.readline().rstrip())
+    return allDocIds
 
 def getTermCount(term, term_dict):
     try:
