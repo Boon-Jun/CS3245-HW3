@@ -2,7 +2,7 @@ from boolean_operations import notOp, andOp
 from search_utils import *
 
 class CombinedTerm(object):
-    """Stores query terms for lazy calculation"""
+    #Stores query terms for lazy evaluation
     def __init__(self):
         self.termsList = []
 
@@ -14,10 +14,11 @@ class CombinedTerm(object):
         return self.termsList
 
     def computeCombinedTerm(self, term_dict, postings, primaryList = None):
+        #Treat this like an abstract method
         pass
 
 class AndCombinedTerm(CombinedTerm):
-
+    # A CombinedTerm with an 'AND' operation
     def __init__(self, term):
         super(AndCombinedTerm, self).__init__()
         self.addNewTerm(term)
@@ -42,7 +43,8 @@ class AndCombinedTerm(CombinedTerm):
 
     def computeCombinedTerm(self, term_dict, postings, primaryList = None):
         intermediateList = primaryList
-
+        # Execute AND operations starting with the term with the smallest size within
+        # an AndCombinedTerm.
         self.moveSmallestTermToFrontOfList(term_dict)
         for term in self.termsList:
             if isinstance(term, CombinedTerm):
@@ -56,13 +58,14 @@ class AndCombinedTerm(CombinedTerm):
         return intermediateList
 
 class NotCombinedTerm(CombinedTerm):
-
+    # A CombinedTerm with a 'NOT' operation
     def __init__(self, term):
         super(NotCombinedTerm, self).__init__()
         self.addNewTerm(term)
 
     def computeCombinedTerm(self, term_dict, postings, primaryList = None):
-        intermediateList = primaryList
+        # Execute 'primaryList' AND NOT 'operand' if primaryList is available,
+        # else, perform 'allDocIds' AND NOT 'operand' (Expensive operation)
 
         term = self.termsList[0]
         operand = None
@@ -72,4 +75,4 @@ class NotCombinedTerm(CombinedTerm):
             operand = term
         else:
             operand = loadPostingList(term, term_dict, postings)
-        return notOp(getAllDocIds(postings), operand) if intermediateList is None else notOp(intermediateList, operand)
+        return notOp(getAllDocIds(postings), operand) if primaryList is None else notOp(primaryList, operand)

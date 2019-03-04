@@ -5,7 +5,7 @@ from advanced_search import *
 
 def executeBasicSearch(queryString, term_dict, postings):
 
-    # This method is the most basic implementation of boolean search operations
+    # This method is a basic implementation of boolean search operations
     # with very minimal optimization. This is used for comparison with a
     # more optimized algorithm to ensure some "correctness".
 
@@ -42,7 +42,8 @@ def executeBasicSearch(queryString, term_dict, postings):
             operandsStack.append(item)
     if len(operandsStack) == 1:
         if type(operandsStack[0]) is not list:
-            #To account for cases where no boolean operations are executed
+            # To account for cases where no boolean operations are executed, this
+            # loads the relevant posting list and remove all skip pointers.
             return [item[0] if type(item) is tuple else item for item in loadPostingList(operandsStack[0], term_dict, postings)]
         else:
             return operandsStack[0]
@@ -61,7 +62,7 @@ def executeOptimizedSearch(queryString, term_dict, postings):
         if item == 'not':
             operand = operandsStack.pop()
 
-            # "CombinedTerm" simply stores the NOT operator and operand together
+            # "CombinedTerm" simply stores the 'NOT' operator and operand together
             # as one "term". This is because NOT x itself is expensive to
             # compute, and delaying this computation can possibly allow the
             # program to find a more optimal way to compute this term after a
@@ -100,8 +101,8 @@ def executeOptimizedSearch(queryString, term_dict, postings):
 
             # If the next boolean operation to execute is the 'OR' operation,
             # the program will compute all CombinedTerms since all other boolean
-            # operations has a higher or equal priority than the 'OR' operation,
-            # and has to be computed.
+            # operations have a higher or equal priority than the 'OR' operation,
+            # and has to be computed before this 'OR' operation can be evaluated.
             if isinstance(operand1, CombinedTerm):
                 operand1 = operand1.computeCombinedTerm(term_dict, postings)
             elif type(operand1) is not list:

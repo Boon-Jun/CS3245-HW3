@@ -42,7 +42,6 @@ postings = open(postings_file, "r")
 initialTime = time.time()
 
 for query in queriesFile:
-    #resultsList = search_logic.executeBasicSearch(query, term_dict, postings)
     resultsList = search_logic.executeOptimizedSearch(query, term_dict, postings)
     if type(resultsList) is list:
         outputFile.write(', '.join(str(docId) for docId in resultsList) + '\n')

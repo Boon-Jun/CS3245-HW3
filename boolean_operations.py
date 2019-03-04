@@ -1,6 +1,6 @@
 
 def andOp(postList1, postList2):
-    ''' postList1 AND postList2 '''
+    #postList1 AND postList2
     list1Size = len(postList1)
     list2Size = len(postList2)
     pos1 = 0;
@@ -31,7 +31,7 @@ def andOp(postList1, postList2):
     return output
 
 def orOp(postList1, postList2):
-    ''' postList1 OR postList2 '''
+    #postList1 OR postList2
     list1Size = len(postList1)
     list2Size = len(postList2)
     pos1 = 0;
@@ -69,7 +69,7 @@ def orOp(postList1, postList2):
     return output
 
 def notOp(postList1, postList2):
-    ''' postList1 AND NOT postList2 '''
+    #postList1 AND NOT postList2
     list1Size = len(postList1)
     list2Size = len(postList2)
     pos1 = 0;

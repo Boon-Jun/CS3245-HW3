@@ -17,8 +17,7 @@ def isOperator(op):
 
 def compareOperators(op1, op2):
     if op1 not in operatorPriority or op2 not in operatorPriority:
-        return 0
-        
+        return -1
     if operatorPriority[op1] < operatorPriority[op2]:
         return 1
     else:
@@ -34,7 +33,7 @@ def queryStringToPostFixList(queryString):
     output = []
     operatorStack = []
 
-    #Adds spaces before and after brackets to make string splitting simpler
+    #Adds spaces before and after brackets to make string tokenization simpler
     spacedOutString = insertSpaceBeforeAndAfterBrackets(queryString)
 
     tokenizedString = [word.lower() if isOperator(word) else stemmer.stem(word.lower()) for word in spacedOutString.split()]
@@ -43,11 +42,14 @@ def queryStringToPostFixList(queryString):
             if token == '(':
                 operatorStack.append(token)
             elif token == ')':
+                # Remove all operators from operatorStack until '(' is found
                 while operatorStack and operatorStack[-1] != '(':
                     output.append(operatorStack.pop())
                 if operatorStack[-1] == '(':
                     operatorStack.pop()
             else:
+                # Remove any operators from the top of the operator stack if
+                # the current token has a strictly higher priority.
                 while operatorStack and compareOperators(token, operatorStack[-1]) == 1:
                      output.append(operatorStack.pop())
                 operatorStack.append(token)
