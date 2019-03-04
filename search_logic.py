@@ -9,8 +9,6 @@ def executeBasicSearch(queryString, term_dict, postings):
     # with very minimal optimization. This is used for comparison with a
     # more optimized algorithm to ensure some "correctness".
 
-    allDocIds = getAllDocIds(postings)
-
     #Converts infix query string to list in postfix notation
     postfixList = queryStringToPostFixList(queryString)
 
@@ -23,7 +21,7 @@ def executeBasicSearch(queryString, term_dict, postings):
             operand = operandsStack.pop()
             if type(operand) is not list:
                 operand = loadPostingList(operand, term_dict, postings)
-            operandsStack.append(notOp(allDocIds, operand))
+            operandsStack.append(notOp(getAllDocIds(postings), operand))
         elif item == 'and':
             operand1 = operandsStack.pop()
             operand2 = operandsStack.pop()

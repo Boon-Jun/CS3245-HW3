@@ -17,31 +17,29 @@ class CombinedTerm():
     def getTerms(self):
         return self.termsList
 
-    def sortTermsList(self, term_dict):
-
-        #Sort the terms so that the smaller sized terms can be process first
-        termCounts = []
-        for term in self.termsList:
+    def moveSmallestTermToFrontOfList(self, term_dict):
+        #Moves smallest term to front of the list so that it will be processed first
+        smallestTermCount = 1e9
+        smallestTermPos = 0
+        for x in range(len(self.termsList)):
+            term = self.termsList[x]
+            currentTermCount = -1
             if isinstance(term, CombinedTerm):
-                termCounts.append(1e9)
+                currentTermCount = 1e8
             elif type(term) is list:
-                return len(term)
+                currentTermCount = len(term)
             else:
-                termCounts.append(getTermCount(term, term_dict))
-        termsList = [terms for _,terms in sorted(zip(termCounts,self. termsList))]
-
-    def mergeCombinedTerm(self, combinedTerm):
-        if isinstance(combinedTerm, CombinedTerm) and combinedTerm.operation == self.operation:
-            self.termsList.extend(combinedTerm.termsList[:])
-        else:
-            print "Invalid combinedTerm merging"
+                currentTermCount = getTermCount(term, term_dict)
+            if currentTermCount < smallestTermCount:
+                smallestTermCount = currentTermCount
+                smallestTermPos = x
+            self.termsList[0], self.termsList[smallestTermPos] = self.termsList[smallestTermPos], self.termsList[0]
 
     def computeCombinedTerm(self, term_dict, postings, primaryList = None):
         intermediateList = primaryList
 
-        self.sortTermsList(term_dict)
-
         if self.operation == "and":
+            self.moveSmallestTermToFrontOfList(term_dict)
             for term in self.termsList:
                 if isinstance(term, CombinedTerm):
                     intermediateList = term.computeCombinedTerm(term_dict, postings, intermediateList)
