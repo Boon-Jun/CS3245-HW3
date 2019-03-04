@@ -12,6 +12,9 @@ not cat AND dog
 NOT cat and dog
 NOT cat
 NOT (NOT cat)
+NOT NOT cat
+NOT NOT cat OR NOT NOT dog AND NOT NOT CAT
+NOT NOT cat OR NOT NOT dog
 cat or cat
 cat OR cat
 watermelon AND NOT CAT AND NOT DOG AND NOT ZEBRA
@@ -26,5 +29,9 @@ power AND the
 power
 hot
 the
-NOT(the AND power)
+NOT NOT the AND NOT the
+NOT (the AND power)
+hot OR power
+NOT NOT (hot OR power)
+
 NOT(the AND power) OR (skill AND man OR cat)

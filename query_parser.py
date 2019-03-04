@@ -16,14 +16,13 @@ def isOperator(op):
     return op in operatorPriority or op == ')' or op == "("
 
 def compareOperators(op1, op2):
-    if op2 == '(':
-        return 1
-    if operatorPriority[op1] < operatorPriority[op2]:
-        return -1
-    elif operatorPriority[op1] == operatorPriority[op2]:
+    if op1 not in operatorPriority or op2 not in operatorPriority:
         return 0
-    else:
+        
+    if operatorPriority[op1] < operatorPriority[op2]:
         return 1
+    else:
+        return 0
 
 def insertSpaceBeforeAndAfterBrackets(queryString):
     pat = re.compile(r"([()])")
@@ -49,7 +48,7 @@ def queryStringToPostFixList(queryString):
                 if operatorStack[-1] == '(':
                     operatorStack.pop()
             else:
-                while operatorStack and compareOperators(token, operatorStack[-1]) != 1:
+                while operatorStack and compareOperators(token, operatorStack[-1]) == 1:
                      output.append(operatorStack.pop())
                 operatorStack.append(token)
         else:
