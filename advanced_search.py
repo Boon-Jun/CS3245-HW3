@@ -1,21 +1,26 @@
 from boolean_operations import notOp, andOp
 from search_utils import *
 
-class CombinedTerm():
+class CombinedTerm(object):
     """Stores query terms for lazy calculation"""
-    def __init__(self, operation):
-        self.operation = operation
+    def __init__(self):
         self.termsList = []
 
     def addNewTerm(self, term):
         self.termsList.append(term)
         return self
 
-    def getOperation(self):
-        return self.operation
-
     def getTerms(self):
         return self.termsList
+
+    def computeCombinedTerm(self, term_dict, postings, primaryList = None):
+        pass
+
+class AndCombinedTerm(CombinedTerm):
+
+    def __init__(self, term):
+        super(AndCombinedTerm, self).__init__()
+        self.addNewTerm(term)
 
     def moveSmallestTermToFrontOfList(self, term_dict):
         #Moves smallest term to front of the list so that it will be processed first
@@ -38,30 +43,33 @@ class CombinedTerm():
     def computeCombinedTerm(self, term_dict, postings, primaryList = None):
         intermediateList = primaryList
 
-        if self.operation == "and":
-            self.moveSmallestTermToFrontOfList(term_dict)
-            for term in self.termsList:
-                if isinstance(term, CombinedTerm):
-                    intermediateList = term.computeCombinedTerm(term_dict, postings, intermediateList)
-                else:
-                    operand = term if type(term) is list else loadPostingList(term, term_dict, postings)
-                    if intermediateList is None:
-                        intermediateList = operand
-                    else:
-                        intermediateList = andOp(operand, intermediateList)
-            return intermediateList
-
-        elif self.operation == "not":
-            term = self.termsList[0]
-            operand = None
+        self.moveSmallestTermToFrontOfList(term_dict)
+        for term in self.termsList:
             if isinstance(term, CombinedTerm):
-                operand = term.computeCombinedTerm(term_dict, postings)
-            elif type(term) is list:
-                operand = term
+                intermediateList = term.computeCombinedTerm(term_dict, postings, intermediateList)
             else:
-                operand = loadPostingList(term, term_dict, postings)
-            return notOp(getAllDocIds(postings), operand) if intermediateList is None else notOp(intermediateList, operand)
+                operand = term if type(term) is list else loadPostingList(term, term_dict, postings)
+                if intermediateList is None:
+                    intermediateList = operand
+                else:
+                    intermediateList = andOp(operand, intermediateList)
+        return intermediateList
 
+class NotCombinedTerm(CombinedTerm):
+
+    def __init__(self, term):
+        super(NotCombinedTerm, self).__init__()
+        self.addNewTerm(term)
+
+    def computeCombinedTerm(self, term_dict, postings, primaryList = None):
+        intermediateList = primaryList
+
+        term = self.termsList[0]
+        operand = None
+        if isinstance(term, CombinedTerm):
+            operand = term.computeCombinedTerm(term_dict, postings)
+        elif type(term) is list:
+            operand = term
         else:
-            print "InvalidCombinedTerm"
-            return []
+            operand = loadPostingList(term, term_dict, postings)
+        return notOp(getAllDocIds(postings), operand) if intermediateList is None else notOp(intermediateList, operand)

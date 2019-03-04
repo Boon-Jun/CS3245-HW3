@@ -1,7 +1,7 @@
 from query_parser import *
 from boolean_operations import *
 from search_utils import *
-from advanced_search import CombinedTerm
+from advanced_search import *
 
 def executeBasicSearch(queryString, term_dict, postings):
 
@@ -70,7 +70,7 @@ def executeOptimizedSearch(queryString, term_dict, postings):
             # z = (NOT x) first and then y AND z since we can work with
             # smaller postings list.)
 
-            operandsStack.append(CombinedTerm("not").addNewTerm(operand))
+            operandsStack.append(NotCombinedTerm(operand))
         elif item == 'and':
             operand1 = operandsStack.pop()
             operand2 = operandsStack.pop()
@@ -86,14 +86,12 @@ def executeOptimizedSearch(queryString, term_dict, postings):
             # is better than performing x AND y first since y AND z has a maximum
             # size of 1 while x AND y has a maximum size of 30000.
 
-            if isinstance(operand1, CombinedTerm) and operand1.getOperation() == "and":
+            if isinstance(operand1, AndCombinedTerm):
                 finalCombinedTerm = operand1.addNewTerm(operand2)
-            elif isinstance(operand2, CombinedTerm) and operand2.getOperation() == "and":
+            elif isinstance(operand2, AndCombinedTerm):
                 finalCombinedTerm = operand2.addNewTerm(operand1)
             else:
-                finalCombinedTerm = CombinedTerm("and")
-                finalCombinedTerm.addNewTerm(operand1)
-                finalCombinedTerm.addNewTerm(operand2)
+                finalCombinedTerm = AndCombinedTerm(operand1).addNewTerm(operand2)
             operandsStack.append(finalCombinedTerm)
 
         elif item == 'or':
