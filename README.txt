@@ -1,4 +1,4 @@
-This is the README file for A0000000X's submission
+This is the README file for A0000000X-***REMOVED***'s submission
 
 == Python Version ==
 
@@ -8,7 +8,42 @@ this assignment.
 == General Notes about this assignment ==
 
 Indexing Algorithm:
+--------------------
+
+Indexing is done in- memory first and then written into the file at the very end.
+The postings are stored in a dictionary with the terms are the keys and a list of postings is the value to each term. 
+The dictionary of terms is stored in a dicitonary with the terms as the keys and the 
+tuple of (byte_offset, document_frequency) as the values. 
+
+The documents are indexed as follows:
+
+1) Document Ids in the directory are are parsed to integers and sorted
+
+2) Tokenize, casefold and stem the text in each document. NLTK Tokenizer and
+NLTK Porter Stemmer are used. Upon preprocessing a document, for each term, if the term is new, 
+add the term to the dictionary and the postings. Then add the occuring Document Id (if it has not already been added) 
+into the corresponding postings list in the postings and update the document frequency in the dictionary.
+
+3) Then, add approximately sqrt(document_frequency) evenly spaced skip pointers 
+to every postings list in the postings, in the form of an index to a document_id to its right, 
+accompanying the select Document Ids. Document Ids with skip pointers will be tuples 
+of the form: (document_id, skip_index). This way, an entire posting list can be loaded as a python list
+when searching and skips will be performed by accessing the element in the list at the specified skip index.
+
+4) Write the list of sorted Document Ids to the top of the postings file. This will be used
+for NOT queries. 
+
+5) While writing the postings list for each term in the postings file, fill the byte_offset value of
+where it is written in the file from the start, in each corresponding term in the dictionary. This 
+makes finding the postings list to be loaded into the memory more efficient, during the search.
+
+6) Pickle the dictionary and write the it to the dictionary file. The entire dictionary can
+be unpickled in the memory during the search as it is relatively small compared to the postings,
+which will only be loaded list by list for every search query.
+
 Searching Algorithm:
+---------------------
+
 The query is first parsed from infix to postfix notation with the help of shunting-yard
 algorithm as suggested.
 
@@ -26,6 +61,7 @@ probably one of the most retrieved list from postings.txt.
 Lastly, we utilized the idea of Lazy Evaluation when evaluating a query.
 Each term and a 'NOT' or 'AND' operator is not immediately evaluated to obtain
 a list of document IDs.
+
 The reason for lazy evaluation is mainly for the following 2 scenarios.
 1) 'NOT x' operations requires the program to merge a list of all document Ids
    with 'NOT x', which is an expensive operation. Processing 'NOT x AND y' together,
@@ -44,7 +80,7 @@ The reason for lazy evaluation is mainly for the following 2 scenarios.
 == Files included with this submission ==
 
 index.py - Required file for submission
-indexer.py -
+indexer.py - Perfoms the indexing of directory of documents.
 dictionary.txt - Pickled dictionary of terms from the Reuters Training Dataset
 postings.txt - Postings List of each term specified in dictionary.txt
 
@@ -60,7 +96,7 @@ search_utils.py - Commonly used utility methods for searching
 
 Please initial one of the following statements.
 
-[x] I, A0000000X, certify that I have followed the CS 3245 Information
+[x] I, A0000000X-***REMOVED***, certify that I have followed the CS 3245 Information
 Retrieval class guidelines for homework assignments.  In particular, I
 expressly vow that I have followed the Facebook rule in discussing
 with others in doing the assignment and did not take notes (digital or
@@ -77,4 +113,5 @@ I suggest that I should be graded as follows:
 
 == References ==
 
+We refered to the forums on IVLE to analyze the various ways to implement the indexing and searching.
 Implementation details of shunting-yard algorithm: https://en.wikipedia.org/wiki/Shunting-yard_algorithm
