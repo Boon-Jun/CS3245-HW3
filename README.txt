@@ -58,9 +58,8 @@ was built.
 
 To process the queries, we will be merging the posting lists, 2 terms at a time.
 We utilize three different strategies in an attempt to improve
-the searching speed of each query. Firstly, skip pointers are implemented, for faster
-merges. The skip pointers are implemented in a way such that sqrt(len(posting_list))
-will be spaced out evenly over a posting list.
+the searching speed of each query. Firstly, skip pointers are implemented for faster
+merges. How it is implemented is explained above under "indexing algorithm".
 
 Secondly, the posting list of all documentIds will be cached during the
 processing of the queries. This is because retrieving the full list takes a
@@ -100,6 +99,7 @@ The reason for lazy evaluation is mainly for the following 2 scenarios.
 	Ans: There are many terms produced by the tokenizers which are often appended or prepended with special symbols as a result of incorrect tokenization of sybols such as apostrophes and hyphens from english words. We tackled this problem in the indexing phase by removing leading and trailing apostrophes specifically as this was the most common case of incorrect tokenization. This is a result of the relative abundance of direct speech and direct citations in the documents. Another case that we did not tackle is acronyms which are often tokenized to individual letters. This can perhaps be prevented by detecting terms with multiple "." in close proximity.
 
 == Files included with this submission ==
+README.txt - This file
 
 index.py - Required file for submission
 indexer.py - Perfoms the indexing of directory of documents.
