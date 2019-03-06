@@ -37,6 +37,7 @@ def queryStringToPostFixList(queryString):
     spacedOutString = insertSpaceBeforeAndAfterBrackets(queryString)
 
     tokenizedString = [word.lower() if isOperator(word) else stemmer.stem(word.lower()) for word in spacedOutString.split()]
+
     for token in tokenizedString:
         if isOperator(token):
             if token == '(':
