@@ -19,10 +19,17 @@ The documents are indexed as follows:
 
 1) Document Ids in the directory are are parsed to integers and sorted
 
-2) Tokenize, casefold and stem the text in each document. NLTK Tokenizer and
-NLTK Porter Stemmer are used. Upon preprocessing a document, for each term, if the term is new, 
-add the term to the dictionary and the postings. Then add the occuring Document Id (if it has not already been added) 
-into the corresponding postings list in the postings and update the document frequency in the dictionary.
+2) Preprocess the text in each document. 
+	i) Prepare the text by replacing '\n' characters in text with ' '
+	ii) Apply the NLTK sentence tokenizer followed by word tokenizer
+	iii) Apply the NLTK Porter Stemmer
+	iv) Case fold each token
+	v) Remove leading and trailing quotation marks (This was done to normalize the terms which were incorrectly 
+	tokenized with the apostrophe by the tokenizer. Such tokens are common in speech where the sentence is wrapped in apostrophes)	
+
+3) For each term, if the term is new, add the term to the dictionary and the postings. 
+Then add the occuring Document Id (if it has not already been added) into the corresponding 
+postings list in the postings and update the document frequency in the dictionary.
 
 3) Then, add approximately sqrt(document_frequency) evenly spaced skip pointers 
 to every postings list in the postings, in the form of an index to a document_id to its right, 

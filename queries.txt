@@ -33,5 +33,4 @@ NOT NOT the AND NOT the
 NOT (the AND power)
 hot OR power
 NOT NOT (hot OR power)
-
 NOT(the AND power) OR (skill AND man OR cat)

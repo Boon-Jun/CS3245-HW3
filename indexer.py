@@ -17,10 +17,12 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 	# to the respective posting list in the index. If word is new, add new key 
 	# in dictionary and index
 	for doc_id in doc_ids:
-		# tokenize casefold the text in document 
+		#### Preprocess Text ###
 		doc = open(join(input_directory, str(doc_id)), "r")	
 		text = doc.read()
-		sentences = [sentence for sentence in sent_tokenize(text)]
+		text = text.replace('\n', ' ')
+		# tokenize
+		sentences = sent_tokenize(text)
 		tokens = []
 		for sent in sentences:
 			tokens.extend([token.lower() for token in word_tokenize(sent)])	
@@ -29,6 +31,12 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 		ps = nltk.stem.PorterStemmer()
 		stemmed_tokens = [ps.stem(token) for token in tokens]
 		for term in stemmed_tokens:
+			# strip leading and trailing quotation marks in terms
+			if (term.startswith("\"") or term.startswith("'")):
+				term = term[1:]
+			if (term.endswith("\"" or term.endswith("\'"))):
+				term = term[:-1]
+
 			if term not in dictionary:
 				dictionary[term] = (None, 1)
 				index[term] = [doc_id]
@@ -36,7 +44,7 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 			elif index[term][dictionary[term][1]- 1] != doc_id: 
 				dictionary[term] = (None, dictionary[term][1] + 1)
 				index[term].append(doc_id)
-
+		
 	# Add skip pointers to every postings list
 	for term in index:
 		doc_freq = dictionary[term][1]
@@ -63,9 +71,10 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 		postings_file.write(str(index[k]) + '\n')
 		offset = postings_file.tell()
 	postings_file.flush()
-	
-	for k in sorted_terms:
-		print(k + " " + str(dictionary[k]))
+		
+	for term in index:
+		print(term)
+		print(index[term])
 
 	# Write dictionary to dictionary file			
 	dictionary_file = open(output_file_dictionary, "wb")
