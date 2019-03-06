@@ -11,15 +11,15 @@ Indexing Algorithm:
 --------------------
 
 Indexing is done in- memory first and then written into the file at the very end.
-The postings are stored in a dictionary with the terms are the keys and a list of postings is the value to each term. 
-The dictionary of terms is stored in a dicitonary with the terms as the keys and the 
-tuple of (byte_offset, document_frequency) as the values. 
+The postings are stored in a dictionary with the terms are the keys and a list of postings is the value to each term.
+The dictionary of terms is stored in a dicitonary with the terms as the keys and the
+tuple of (byte_offset, document_frequency) as the values.
 
 The documents are indexed as follows:
 
 1) Document Ids in the directory are are parsed to integers and sorted
 
-2) Preprocess the text in each document. 
+2) Preprocess the text in each document.
 	i) Prepare the text by replacing '\n' characters in text with ' '
 	ii) Apply the NLTK sentence tokenizer followed by word tokenizer
 	iii) Case fold each token
@@ -27,21 +27,21 @@ The documents are indexed as follows:
 	v) Remove leading and trailing quotation marks (This was done to normalize the terms which were incorrectly 
 	tokenized with the apostrophe by the tokenizer. Such tokens are common in speech where the sentence is wrapped in apostrophes)	
 
-3) For each term, if the term is new, add the term to the dictionary and the postings. 
-Then add the occuring Document Id (if it has not already been added) into the corresponding 
+3) For each term, if the term is new, add the term to the dictionary and the postings.
+Then add the occuring Document Id (if it has not already been added) into the corresponding
 postings list in the postings and update the document frequency in the dictionary.
 
-3) Then, add approximately sqrt(document_frequency) evenly spaced skip pointers 
-to every postings list in the postings, in the form of an index to a document_id to its right, 
-accompanying the select Document Ids. Document Ids with skip pointers will be tuples 
+3) Then, add approximately sqrt(document_frequency) evenly spaced skip pointers
+to every postings list in the postings, in the form of an index to a document_id to its right,
+accompanying the select Document Ids. Document Ids with skip pointers will be tuples
 of the form: (document_id, skip_index). This way, an entire posting list can be loaded as a python list
 when searching and skips will be performed by accessing the element in the list at the specified skip index.
 
 4) Write the list of sorted Document Ids to the top of the postings file. This will be used
-for NOT queries. 
+for NOT queries.
 
 5) While writing the postings list for each term in the postings file, fill the byte_offset value of
-where it is written in the file from the start, in each corresponding term in the dictionary. This 
+where it is written in the file from the start, in each corresponding term in the dictionary. This
 makes finding the postings list to be loaded into the memory more efficient, during the search.
 
 6) Pickle the dictionary and write the it to the dictionary file. The entire dictionary can
@@ -52,13 +52,14 @@ Searching Algorithm:
 ---------------------
 
 The query is first parsed from infix to postfix notation with the help of shunting-yard
-algorithm as suggested.
+algorithm as suggested. Each individual term to be searched will also be stemmed
+and then have any quotations marks removed, similar to how each term in the index
+was built.
 
 To process the queries, we will be merging the posting lists, 2 terms at a time.
 We utilize three different strategies in an attempt to improve
-the searching speed of each query. Firstly, skip pointers are implemented, for faster
-merges. The skip pointers are implemented in a way such that sqrt(len(posting_list))
-will be spaced out evenly over a posting list.
+the searching speed of each query. Firstly, skip pointers are implemented for faster
+merges. How it is implemented is explained above under "indexing algorithm".
 
 Secondly, the posting list of all documentIds will be cached during the
 processing of the queries. This is because retrieving the full list takes a
@@ -87,7 +88,7 @@ The reason for lazy evaluation is mainly for the following 2 scenarios.
 
 == Essay Questions ==
 1) You will observe that a large portion of the terms in the dictionary are numbers. However, we normally do not use numbers as query terms to search. Do you think it is a good idea to remove these number entries from the dictionary and the postings lists? Can you propose methods to normalize these numbers? How many percentage of reduction in disk storage do you observe after removing/normalizing these numbers?
-	Ans: We do not think that it is a good idea to remove these number entries from the dictionary and the postings list. This is because the user might request documents which have numbers accompanied by a term (eg. 2008 AND recession). In this case taking the presence of a specific number (year) in the query will return more relevant set of documents. Perhaps the important or frequently occuring numbers such as days months or years can be indexed separately with separate postings list for each. The remaining numbers can then be grouped into the terms Integers and Decimals.
+	Ans: We do not think that it is a good idea to remove these number entries from the dictionary and the postings list. This is because the user might request documents which have numbers accompanied by a term (eg. 2008 AND recession). In this case taking the presence of a specific number (year) in the query will return more relevant set of documents. Perhaps the important or frequently occuring numbers such as days months or years can be indexed separately with separate postings list for each. The remaining postings for the numbers can be collapsed into Integers and Decimals(unique identifiers from the other terms in the dictionary).
 
 2) What do you think will happen if we remove stop words from the dictionary and postings file? How does it affect the searching phase?
 
@@ -95,9 +96,10 @@ The reason for lazy evaluation is mainly for the following 2 scenarios.
 
 3) The NLTK tokenizer may not correctly tokenize all terms. What do you observe from the resulting terms produced by sent_tokenize() and word_tokenize()? Can you propose rules to further refine these results?
 
-	Ans: There are many terms produced by the tokenizers which are often appended or prepended with special symbols as a result of incorrect tokenization of sybols such as apostrophes and hyphens from english words. We tackled this problem in the indexing phase by removing leading and trailing apostrophes specifically as this was the most common case of incorrect tokenization. This is a result of the relative abundance of direct speech and direct citations in the documents. Another case that we did not tackle is acronyms which are often tokenized to individual letters. This can perhaps be prevented by detecting terms with multiple "." in close proximity. 
+	Ans: There are many terms produced by the tokenizers which are often appended or prepended with special symbols as a result of incorrect tokenization of sybols such as apostrophes and hyphens from english words. We tackled this problem in the indexing phase by removing leading and trailing apostrophes specifically as this was the most common case of incorrect tokenization. This is a result of the relative abundance of direct speech and direct citations in the documents. Another case that we did not tackle is acronyms which are often tokenized to individual letters. This can perhaps be prevented by detecting terms with multiple "." in close proximity.
 
 == Files included with this submission ==
+README.txt - This file
 
 index.py - Required file for submission
 indexer.py - Perfoms the indexing of directory of documents.

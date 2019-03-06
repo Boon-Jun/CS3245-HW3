@@ -6,8 +6,9 @@ from advanced_search import *
 def executeBasicSearch(queryString, term_dict, postings):
 
     # This method is a basic implementation of boolean search operations
-    # with very minimal optimization. This is used for comparison with a
-    # more optimized algorithm to ensure some "correctness".
+    # with very minimal optimization. This is not used in the actual execution of
+    # the search, but it is used for comparison with more optimized algorithm
+    # to ensure some "correctness" in the optimized search
 
     #Converts infix query string to list in postfix notation
     postfixList = queryStringToPostFixList(queryString)
@@ -39,6 +40,13 @@ def executeBasicSearch(queryString, term_dict, postings):
                 operand2 = loadPostingList(operand2, term_dict, postings)
             operandsStack.append(orOp(operand1, operand2))
         else:
+            # If item is not a boolean operator than it is an operand
+
+            # strip leading and trailing quotation marks if any in operand
+            if (item.startswith("\"") or item.startswith("'")):
+                token = token[1:]
+            if (item.endswith("\"" or item.endswith("\'"))):
+                token = token[:-1]
             operandsStack.append(item)
     if len(operandsStack) == 1:
         if type(operandsStack[0]) is not list:
@@ -115,7 +123,15 @@ def executeOptimizedSearch(queryString, term_dict, postings):
 
             operandsStack.append(orOp(operand1, operand2))
         else:
+            # If item is not a boolean operator than it is an operand
+
+            # strip leading and trailing quotation marks if any in operand
+            if (item.startswith("\"") or item.startswith("'")):
+                token = token[1:]
+            if (item.endswith("\"" or item.endswith("\'"))):
+                token = token[:-1]
             operandsStack.append(item)
+
     if len(operandsStack) == 1:
         if isinstance(operandsStack[0], CombinedTerm):
             #Compute the combined term before output.
