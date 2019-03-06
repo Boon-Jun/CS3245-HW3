@@ -84,6 +84,19 @@ The reason for lazy evaluation is mainly for the following 2 scenarios.
    is smaller than y and z. It is most optimal to process z first, and lazy evaluation
    ensures that x AND y will not be evaluated until z is processed.
 
+
+== Essay Questions ==
+1) You will observe that a large portion of the terms in the dictionary are numbers. However, we normally do not use numbers as query terms to search. Do you think it is a good idea to remove these number entries from the dictionary and the postings lists? Can you propose methods to normalize these numbers? How many percentage of reduction in disk storage do you observe after removing/normalizing these numbers?
+	Ans: We do not think that it is a good idea to remove these number entries from the dictionary and the postings list. This is because the user might request documents which have numbers accompanied by a term (eg. 2008 AND recession). In this case taking the presence of a specific number (year) in the query will return more relevant set of documents. Perhaps the important or frequently occuring numbers such as days months or years can be indexed separately with separate postings list for each. The remaining numbers can then be grouped into the terms Integers and Decimals.
+
+2) What do you think will happen if we remove stop words from the dictionary and postings file? How does it affect the searching phase?
+
+	Ans: Removing stop words will decrease the disk space used tremenously as words such as "the", "It" etc. are present in almost every document. It will not affect the searching phase much unless the user specifically requests for special documents without the stop words perhaps to get documents with uncommon sentence structures (eg. documents with primarily numbers)
+
+3) The NLTK tokenizer may not correctly tokenize all terms. What do you observe from the resulting terms produced by sent_tokenize() and word_tokenize()? Can you propose rules to further refine these results?
+
+	Ans: There are many terms produced by the tokenizers which are often appended or prepended with special symbols as a result of incorrect tokenization of sybols such as apostrophes and hyphens from english words. We tackled this problem in the indexing phase by removing leading and trailing apostrophes specifically as this was the most common case of incorrect tokenization. This is a result of the relative abundance of direct speech and direct citations in the documents. Another case that we did not tackle is acronyms which are often tokenized to individual letters. This can perhaps be prevented by detecting terms with multiple "." in close proximity. 
+
 == Files included with this submission ==
 
 index.py - Required file for submission
