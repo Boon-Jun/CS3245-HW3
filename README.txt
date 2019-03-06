@@ -22,8 +22,8 @@ The documents are indexed as follows:
 2) Preprocess the text in each document. 
 	i) Prepare the text by replacing '\n' characters in text with ' '
 	ii) Apply the NLTK sentence tokenizer followed by word tokenizer
-	iii) Apply the NLTK Porter Stemmer
-	iv) Case fold each token
+	iii) Case fold each token
+	iv) Apply the NLTK Porter Stemmer
 	v) Remove leading and trailing quotation marks (This was done to normalize the terms which were incorrectly 
 	tokenized with the apostrophe by the tokenizer. Such tokens are common in speech where the sentence is wrapped in apostrophes)	
 
