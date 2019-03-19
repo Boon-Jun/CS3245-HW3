@@ -13,6 +13,8 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 	dictionary = {}
 	# Every term in the index is mapped to a postings list
 	index = {}
+	# Every doc_id is mapped to document  vector length
+	lengths = {}
 	# For every word in every document, add the document_id of the occuring word 
 	# to the respective posting list in the index. If word is new, add new key 
 	# in dictionary and index
@@ -30,6 +32,8 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 		# stem the tokens
 		ps = nltk.stem.PorterStemmer()
 		stemmed_tokens = [ps.stem(token) for token in tokens]
+		# maps every unique term in doc to its frequency
+		term_to_freq = {}
 		for term in stemmed_tokens:
 			# strip leading and trailing quotation marks in terms
 			if (term.startswith("\"") or term.startswith("'")):
@@ -40,16 +44,26 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 			if term not in dictionary:
 				dictionary[term] = (None, 1)
 				index[term] = [(doc_id, 1)]
+				term_to_freq[term] = 1	
 			# if doc_id is not already added to term's postings
 			elif index[term][dictionary[term][1]- 1][0] != doc_id: 
 				# increment df for term
 				dictionary[term] = (None, dictionary[term][1] + 1)
 				index[term].append((doc_id, 1))
+				term_to_freq[term] = 1	
 			# if doc_id is already added to term's postings, increment tf for that document
 			else:
 				index[term][dictionary[term][1] - 1] = (index[term][dictionary[term][1] - 1][0], index[term][dictionary[term][1] - 1][1] + 1)
+				term_to_freq[term] += 1	
 				#print("Increment tf of " + term + " in " + str(doc_id) + " to " + str(posting[1]))
 		
+		# calculate and store vector magnitude of doc
+		mag_square = 0
+		for term in term_to_freq:
+			mag_square += math.pow(1 + math.log10(term_to_freq[term]),2)
+		vector_len = math.sqrt(mag_square)
+ 		lengths[doc_id] = vector_len
+
 	# Add skip pointers to every postings list
 	for term in index:
 		doc_freq = dictionary[term][1]
@@ -76,7 +90,7 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 		postings_file.write(str(index[k]) + '\n')
 		offset = postings_file.tell()
 	postings_file.flush()
-	
+	postings_file.close()
 
 	for term in index:
 		print(term)
@@ -86,4 +100,11 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 	dictionary_file = open(output_file_dictionary, "wb")
 	pickle.dump(dictionary, dictionary_file)		
 	dictionary_file.flush()
+	dictionary_file.close()
+
+	# Write document vector lengths to lengths file
+	lengths_file = open("lengths.txt", "wb")
+	pickle.dump(lengths, lengths_file)
+	lengths_file.flush()
+	lengths_file.close()
 	
