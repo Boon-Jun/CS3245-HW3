@@ -36,14 +36,19 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 				term = term[1:]
 			if (term.endswith("\"" or term.endswith("\'"))):
 				term = term[:-1]
-
+			
 			if term not in dictionary:
 				dictionary[term] = (None, 1)
-				index[term] = [doc_id]
+				index[term] = [(doc_id, 1)]
 			# if doc_id is not already added to term's postings
-			elif index[term][dictionary[term][1]- 1] != doc_id: 
+			elif index[term][dictionary[term][1]- 1][0] != doc_id: 
+				# increment df for term
 				dictionary[term] = (None, dictionary[term][1] + 1)
-				index[term].append(doc_id)
+				index[term].append((doc_id, 1))
+			# if doc_id is already added to term's postings, increment tf for that document
+			else:
+				index[term][dictionary[term][1] - 1] = (index[term][dictionary[term][1] - 1][0], index[term][dictionary[term][1] - 1][1] + 1)
+				#print("Increment tf of " + term + " in " + str(doc_id) + " to " + str(posting[1]))
 		
 	# Add skip pointers to every postings list
 	for term in index:
@@ -52,7 +57,7 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 		skip_size = int(doc_freq / skip_pointers_count)
 		for i in range(0, (doc_freq - skip_size - 1)):
 			if i % skip_size == 0:
-				index[term][i] = (index[term][i], i + skip_size)
+				index[term][i] = (index[term][i][0], index[term][i][1], i + skip_size)
 
 	# Write dictionary and index
 	offset = 0
@@ -71,7 +76,8 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 		postings_file.write(str(index[k]) + '\n')
 		offset = postings_file.tell()
 	postings_file.flush()
-		
+	
+
 	for term in index:
 		print(term)
 		print(index[term])
