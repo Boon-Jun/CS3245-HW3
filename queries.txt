@@ -1,17 +1,18 @@
+the
 cat
 dog
 watermelon
 zebra
-cat AND dog
-watermelon OR zebra
-cat AND watermelon OR zebra
-cat OR watermelon AND dog
-(cat OR watermelon) AND dog
+cat dog
+watermelon zebra
+cat watermelon zebra
+cat watermelon dog
+cat watermelon dog
 NOT cat AND dog
 not cat AND dog
 NOT cat and dog
 NOT cat
-NOT (NOT cat)
+NOT NOT cat
 NOT NOT cat
 NOT NOT cat OR NOT NOT dog AND NOT NOT CAT
 NOT NOT cat OR NOT NOT dog
@@ -20,9 +21,9 @@ cat OR cat
 watermelon AND NOT CAT AND NOT DOG AND NOT ZEBRA
 NOT CAT AND NOT DOG AND NOT ZEBRA
 watermelon AND cat
-NOT (dog) AND zebra AND watermelon AND cat
-not (dog) and zebra or watermelon and cat
-NOT (dog) AND zebra OR watermelon AND cat
+NOT dog AND zebra AND watermelon AND cat
+not dog and zebra or watermelon and cat
+NOT dog AND zebra OR watermelon AND cat
 hot and hot
 power and power
 power AND the
@@ -30,7 +31,7 @@ power
 hot
 the
 NOT NOT the AND NOT the
-NOT (the AND power)
+NOT the AND power
 hot OR power
-NOT NOT (hot OR power)
-NOT(the AND power) OR (skill AND man OR cat)
+NOT NOT hot OR power
+NOT the AND power OR skill AND man OR cat
