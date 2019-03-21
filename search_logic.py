@@ -1,4 +1,4 @@
-from query_parser import queryStringToStemmedList
+from query_parser import queryStringToTermsList
 from search_utils import *
 import math
 import heapq
@@ -10,15 +10,23 @@ def calculateLength(coordinates):
         i += val * val
     return math.sqrt(i)
 
-def executeSearch(queryString, term_dict, postings, lengths_file):
+def executeSearch(queryString, term_dict, postings, vector_lengths):
 
     queryTermSet = {}
     queryWeights = {}
     totalNumberOfDocs = getTotalNumberOfDocs(postings)
-    queryList = queryStringToStemmedList(queryString)
+    queryList = queryStringToTermsList(queryString)
     scores = {}
 
-    for term in queryList:
+    for item in queryList:
+        term = item
+        # strip leading and trailing quotation marks in terms
+        if (term.startswith("\"") or term.startswith("'")):
+            term = term[1:]
+        if (term.endswith("\"" or term.endswith("\'"))):
+            term = term[:-1]
+
+        #Each Term
         if term not in queryTermSet:
             queryTermSet[term] = [1, getDocFrequency(term, term_dict)]
         else:
@@ -41,7 +49,7 @@ def executeSearch(queryString, term_dict, postings, lengths_file):
 
     #Normalization for docIds
     for docId in scores:
-        scores[docId] = scores[docId]/getLengthOfDoc(docId, lengths_file)
+        scores[docId] = scores[docId]/getVectorLength(docId, vector_lengths)
 
     #Retrieve Top 10 Documents with a heap
     topList = heapq.nlargest(10, ([scores[docId], docId] for docId in scores), key = itemgetter(0))

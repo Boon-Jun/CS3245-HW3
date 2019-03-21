@@ -9,7 +9,7 @@ def insertSpaceBeforeAndAfterBrackets(queryString):
     pat = re.compile(r"([()])")
     return pat.sub(" \\1 ", queryString)
 
-def queryStringToStemmedList(queryString):
+def queryStringToTermsList(queryString):
 
-    #TODO?: REMOVE QUOTES FROM QUERY?
+    #Query string will be split and have each individual terms stemmed with PorterStemmer
     return [stemmer.stem(word.lower()) for word in queryString.split()]
