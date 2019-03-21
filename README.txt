@@ -24,8 +24,8 @@ The documents are indexed as follows:
 	ii) Apply the NLTK sentence tokenizer followed by word tokenizer
 	iii) Case fold each token
 	iv) Apply the NLTK Porter Stemmer
-	v) Remove leading and trailing quotation marks (This was done to normalize the terms which were incorrectly 
-	tokenized with the apostrophe by the tokenizer. Such tokens are common in speech where the sentence is wrapped in apostrophes)	
+	v) Remove leading and trailing quotation marks (This was done to normalize the terms which were incorrectly
+	tokenized with the apostrophe by the tokenizer. Such tokens are common in speech where the sentence is wrapped in apostrophes)
 
 3) For each term, if the term is new, add the term to the dictionary and the postings.
 Then add the occuring Document Id (if it has not already been added) into the corresponding
@@ -51,40 +51,31 @@ which will only be loaded list by list for every search query.
 Searching Algorithm:
 ---------------------
 
-The query is first parsed from infix to postfix notation with the help of shunting-yard
-algorithm as suggested. Each individual term to be searched will also be stemmed
-and then have any quotations marks removed, similar to how each term in the index
-was built.
+Before the documents are being ranked, the query string will be split and then stemmed
+with PorterStemmer. Further processing is done whereby the leading and trailing quotation
+marks is removed from each term to align with how the terms in the documents were processed.
 
-To process the queries, we will be merging the posting lists, 2 terms at a time.
-We utilize three different strategies in an attempt to improve
-the searching speed of each query. Firstly, skip pointers are implemented for faster
-merges. How it is implemented is explained above under "indexing algorithm".
+The documents will then be ranked according to the lnc.ltc ranking scheme.
+That is to say that the weights of each term in the document will be calculated as :
+(1 + log10(term_frequency_in_documents))
+whereas the weights of each term in the query will be calculated as:
+tf-idf = (1 + log(term_frequency_in_query)) * log(number_of_documents/document_frequency)
+After that, cosine normalization will be applied to the weights of each term in both
+the query and the document, and the dot product of the weights of the terms in the
+query and the weights of the terms in the documents will give us a score.
 
-Secondly, the posting list of all documentIds will be cached during the
-processing of the queries. This is because retrieving the full list takes a
-significant amount of time, and we believe that the list of all documentIds is
-probably one of the most retrieved list from postings.txt.
+However, in our actual implementation, we omit the step of computing the cosine
+normalization for the query since the computation of the cosine normalization
+for the query will reduce the calculated scores by the same factor, and the
+actual ranking of the documents will not be affected regardless of the computation.
 
-Lastly, we utilized the idea of Lazy Evaluation when evaluating a query.
-Each term and a 'NOT' or 'AND' operator is not immediately evaluated to obtain
-a list of document IDs.
+To retrieve the Top 10 Ranked documents, we utilize python's heapq library, which helps
+us create the heap and select the top 10 documents in O(N + 10logN) time, whereby
+N is the number of documents that is up for consideration for a given query. That is
+one of the terms in the query string appeared in the documents at least once.
 
-The reason for lazy evaluation is mainly for the following 2 scenarios.
-1) 'NOT x' operations requires the program to merge a list of all document Ids
-   with 'NOT x', which is an expensive operation. Processing 'NOT x AND y' together,
-   is on the other hand faster as size of list y <= list all Document Ids.
-   However, to evaluate 'NOT x AND y', we have to delay the evaluation of NOT x,
-   until y has been processed.
-
-2) Not only does processing smaller sets first reduces the size of the posting list that
-   needs to be stored in memory, it also reduces computational cost since merging
-   smaller sets is faster. Lazy evaluation allows the program to choose the
-   smaller term to process first and delaying the evaluation of the larger terms.
-   For example, consider 'x AND y AND z' operations such that the size of list z
-   is smaller than y and z. It is most optimal to process z first, and lazy evaluation
-   ensures that x AND y will not be evaluated until z is processed.
-
+In the event that 2 documents have the same score, they will be then be sorted by
+their documentIds in ascending order.
 
 == Essay Questions ==
 1) You will observe that a large portion of the terms in the dictionary are numbers. However, we normally do not use numbers as query terms to search. Do you think it is a good idea to remove these number entries from the dictionary and the postings lists? Can you propose methods to normalize these numbers? How many percentage of reduction in disk storage do you observe after removing/normalizing these numbers?
@@ -105,12 +96,14 @@ index.py - Required file for submission
 indexer.py - Perfoms the indexing of directory of documents.
 dictionary.txt - Pickled dictionary of terms from the Reuters Training Dataset
 postings.txt - Postings List of each term specified in dictionary.txt
-
+lengths.txt - Stores the document length
 search.py - Required file for submission
+            Usage of search.py now slightly differs from the original due to the
+						addition of lengths.txt file
+						As such, the correct usage of search.py file will now be:
+						python search.py -d dictionary-file -p postings-file -l length-file -q file-of-queries -o output-file-of-results
 search_logic.py - Main implementation of search logic
-query_parser.py - Shunting-yard algorithm to parse infix queries to postfix queries
-boolean_operations.py - Implementation of NOT,AND,OR boolean operations
-advanced_search.py - Contains 'CombinedTerms' class and its subclasses
+query_parser.py - Contains simple query parser to split and stem a query string
 search_utils.py - Commonly used utility methods for searching
 
 
