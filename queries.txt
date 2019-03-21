@@ -13,7 +13,7 @@ not cat AND dog
 NOT cat and dog
 NOT cat
 NOT NOT cat
-NOT NOT cat
+NOT NOT 'cat"
 NOT NOT cat OR NOT NOT dog AND NOT NOT CAT
 NOT NOT cat OR NOT NOT dog
 cat or cat
