@@ -1,6 +1,6 @@
 import ast
 
-allDocIds = None
+maxLength = None
 
 def loadPostingList(term, term_dict, postings):
     byteOffset = 0
@@ -12,13 +12,7 @@ def loadPostingList(term, term_dict, postings):
     return ast.literal_eval(postings.readline().rstrip())
 
 def getAllDocIds(postings):
-    global allDocIds
-    if allDocIds == None:
-        # Stores the list of all documents once, so that it is not required
-        # to load it again
-        postings.seek(0)
-        allDocIds = ast.literal_eval(postings.readline().rstrip())
-    return allDocIds
+    return ast.literal_eval(postings.readline().rstrip())
 
 def getDocFrequency(term, term_dict):
     try:
@@ -33,4 +27,7 @@ def getVectorLength(docId, vector_lengths):
         return 0
 
 def getTotalNumberOfDocs(postings):
-    return len(getAllDocIds(postings))
+    global maxLength
+    if maxLength == None:
+        maxLength = len(getAllDocIds(postings))
+    return maxLength
