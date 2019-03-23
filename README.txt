@@ -69,7 +69,7 @@ query and the weights of the terms in the documents will give us a score.
 However, in our actual implementation, we omit the step of computing the cosine
 normalization for the query since the computation of the cosine normalization
 for the query will reduce the calculated scores by the same factor, and the
-actual ranking of the documents will not be affected regardless of the computation.
+actual ranking of the documents will not be affected.
 
 To retrieve the Top 10 Ranked documents, we utilize the heapq library, nlargest
 method.
@@ -95,9 +95,42 @@ in the event that 2 documents have the same score.
 
 == Essay Questions ==
 
-1. In this assignment, we didn't ask you to support phrasal queries, which is a feature that is typically supported in web search engines. Describe how you would support phrasal search in conjunction with the VSM model. A sketch of the algorithm is sufficient. (For those of you who like a challenge, please go ahead and implement this feature in your submission but clearly demarcate it in your code and allow this feature to be turned on or off using the command line switch "-x" (where "-x" means to turn on the extended processing of phrasal queries). We will give a small bonus to submissions that achieve this functionality correctly).
+1. In this assignment, we didn't ask you to support phrasal queries, which is a
+feature that is typically supported in web search engines. Describe how you would
+ support phrasal search in conjunction with the VSM model. A sketch of the algorithm
+ is sufficient. (For those of you who like a challenge, please go ahead and
+ implement this feature in your submission but clearly demarcate it in your
+ code and allow this feature to be turned on or off using the command line
+ switch "-x" (where "-x" means to turn on the extended processing of phrasal
+ queries). We will give a small bonus to submissions that achieve this
+ functionality correctly).
 
-2. Describe how your search engine reacts to long documents and long queries as compared to short documents and queries. Is the normalization you use sufficient to address the problems (see Section 6.4.4 for a hint)? In your judgement, is the ltc.lnc scheme (n.b., not the ranking scheme you were asked to implement) sufficient for retrieving documents from the Reuters-21578 collection?
+ In our opinion, one possible way to perform phrasal queries is to index the documents into
+ bigrams and unigrams, and store both type of grams into the index.
+ We can also extend this to higher n-grams as long as space is not an issue.
+ Example: "Fight me please" will be indexed as "Fight", "me", "Fight me" etc., not
+          forgetting the stemming.
+
+ To perform the search, the query string will be splitted into terms
+ of unigrams and bigrams. Treating each unigram and bigram as a single term, we could
+ then implement the same lnc.ltc ranking scheme and rank each document accordingly.
+
+ However, this implementation does not consider phrases that has a length
+ of more than n, where n is the highest numbered n-gram stored in the index.
+
+
+2. Describe how your search engine reacts to long documents and long queries as
+compared to short documents and queries. Is the normalization you use sufficient
+to address the problems (see Section 6.4.4 for a hint)? In your judgement,
+is the ltc.lnc scheme (n.b., not the ranking scheme you were asked to implement)
+sufficient for retrieving documents from the Reuters-21578 collection?
+
+Firstly, long queries takes a longer time to proces.
+Long Documents tends to have a greater diversity of words, and each term within the long document
+will therefore have a lower score as compared to another term within a short document.
+This means that a shorter document will much more likely to have a higher ranking due to the higher score.
+The normalization we use is not sufficient to address this problem since it does not take into account
+the length of each document.
 
 3. Do you think zone or field parametric indices would be useful for practical search in the Reuters collection? Note: the Reuters collection does have metadata for each article but the quality of the metadata is not uniform, nor are the metadata classifications uniformly applied (some documents have it, some don't). Hint: for the next Homework #4, we will be using field metadata, so if you want to base Homework #4 on your Homework #3, you're welcomed to start support of this early (although no extra credit will be given if it's right).
 
