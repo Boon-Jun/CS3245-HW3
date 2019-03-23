@@ -45,6 +45,6 @@ vector_lengths = pickle.load(open(lengths_file, "rb"))
 for query in queriesFile:
     resultsList = search_logic.executeSearch(query, term_dict, postings, vector_lengths)
     if type(resultsList) is list:
-        outputFile.write(', '.join(str(docId) for docId in resultsList) + '\n')
+        outputFile.write(' '.join(str(docId) for docId in resultsList) + '\n')
     else:
         outputFile.write('\n')
