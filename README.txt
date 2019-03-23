@@ -50,10 +50,12 @@ which will only be loaded list by list for every search query.
 
 Searching Algorithm:
 ---------------------
+Note: There are some changes to how search.py is used. Refer to the section under
+      'Files included with this submission' for more details
 
 Before the documents are being ranked, the query string will be split and then stemmed
-with PorterStemmer. Further processing is done whereby the leading and trailing quotation
-marks is removed from each term to align with how the terms in the documents were processed.
+with PorterStemmer. The leading and trailing quotation marks is then removed
+from each stemmed term as this was how terms were processed during indexing.
 
 The documents will then be ranked according to the lnc.ltc ranking scheme.
 That is to say that the weights of each term in the document will be calculated as :
@@ -69,12 +71,27 @@ normalization for the query since the computation of the cosine normalization
 for the query will reduce the calculated scores by the same factor, and the
 actual ranking of the documents will not be affected regardless of the computation.
 
-To retrieve the Top 10 Ranked documents, we utilize python's heapq library, which helps
-us create the heap and select the top 10 documents in O(NLog10) time, whereby
-N is the number of documents that has matching stems to the query.
+To retrieve the Top 10 Ranked documents, we utilize the heapq library, nlargest
+method.
 
-In the event that 2 documents have the same score, they will be then be sorted by
-their documentIds in ascending order.
+How the nlargest method selects the top 10 ranked documents:
+1) If there are lesser than 10 documents, the method will return all the documents
+2) Else:
+   2a) Create a heap of size 10 first with 10 documents
+   2b) For each document(A) not added into the heap yet
+       a)If A has a higher score than the document with the lowest score in the heap
+	       or if A has the same score with the document with the lowest score in the heap,
+		     but a smaller document ID, then the document within the heap will be removed
+		     and A will be added into the heap.
+       b)If not, A will not be added to the heap.
+
+Since there is a total of N documents and a heap of size 10, there will be an upperbound
+of N additions and N removals. Therefore, the time complexity to retrieve the top
+N documents is O(NLog10)
+
+After the top 10(or lesser) documents are retrieved, the document Ids are then
+sorted in order of decreasing score and then by order of increasing document Ids
+in the event that 2 documents have the same score.
 
 == Essay Questions ==
 
@@ -123,5 +140,5 @@ I suggest that I should be graded as follows:
 
 == References ==
 
-We refered to the forums on IVLE to analyze the various ways to implement the indexing and searching.
-Implementation details of shunting-yard algorithm: https://en.wikipedia.org/wiki/Shunting-yard_algorithm
+Forums on IVLE - Compare Search Results
+python's heapq documentation and source code - Helps us understand the nlargest method
