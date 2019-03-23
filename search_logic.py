@@ -52,5 +52,8 @@ def executeSearch(queryString, term_dict, postings, vector_lengths):
         scores[docId] = scores[docId]/getVectorLength(docId, vector_lengths)
 
     #Retrieve Top 10 Documents with a heap
+
+    # Top 10 items will be retrieved from the heap, first by highest score
+    # and then by smallest docId, in the event that 2 documents have the same score.
     topList = heapq.nlargest(10, ([scores[docId], docId] for docId in scores), key = lambda pair:(pair[0], -pair[1]))
     return [pair[1] for pair in sorted(topList, key = lambda pair: (-pair[0], pair[1]))]

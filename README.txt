@@ -70,9 +70,8 @@ for the query will reduce the calculated scores by the same factor, and the
 actual ranking of the documents will not be affected regardless of the computation.
 
 To retrieve the Top 10 Ranked documents, we utilize python's heapq library, which helps
-us create the heap and select the top 10 documents in O(N + 10logN) time, whereby
-N is the number of documents that is up for consideration for a given query. That is
-one of the terms in the query string appeared in the documents at least once.
+us create the heap and select the top 10 documents in O(NLog10) time, whereby
+N is the number of documents that has matching stems to the query.
 
 In the event that 2 documents have the same score, they will be then be sorted by
 their documentIds in ascending order.
