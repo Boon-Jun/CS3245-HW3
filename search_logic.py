@@ -20,12 +20,6 @@ def executeSearch(queryString, term_dict, postings, vector_lengths):
 
     for item in queryList:
         term = item
-        # strip leading and trailing quotation marks in terms
-        if (term.startswith("\"") or term.startswith("'")):
-            term = term[1:]
-        if (term.endswith("\"" or term.endswith("\'"))):
-            term = term[:-1]
-
         #Each Term
         if term not in queryTermSet:
             queryTermSet[term] = [1, getDocFrequency(term, term_dict)]

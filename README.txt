@@ -21,23 +21,37 @@ The documents are indexed as follows:
 
 2) Preprocess the text in each document.
 	i) Prepare the text by replacing '\n' characters in text with ' '
-	ii) Apply the NLTK sentence tokenizer followed by word tokenizer
-	iii) Case fold each token
-	iv) Apply the NLTK Porter Stemmer
-	v) Remove leading and trailing quotation marks (This was done to normalize the terms which were incorrectly
-	tokenized with the apostrophe by the tokenizer. Such tokens are common in speech where the sentence is wrapped in apostrophes)
+	ii) Apply the NLTK sentence tokenizer
+	iii) Replace all non alphanumeric characters in sentence with space. This step ensures that
+	the terms in the sentences are normalized. This has to be done as the word tokenizer fails
+	to remove unnecessary symbols from words frequently leading to reduced term frequency 
+	of a word.
+	iv) Word Tokenize each sentece with NLTK sentence tokenizer
+	v) Case fold each token
+	vi) Apply the NLTK Porter Stemmer
 
-3) For each term, if the term is new, add the term to the dictionary and the postings.
-Then add the occuring Document Id (if it has not already been added) into the corresponding
-postings list in the postings and update the document frequency in the dictionary.
+3a) For each term, if the term is new, add the term to the dictionary and the postings.
+Then add the occuring Document Id (if it has not already been added) and Term frequency 
+ into the corresponding postings list in the postings and update the document frequency 
+in the dictionary.
+
+3b) Keep track of the term frequency of every term in the document with a python dictionary.
+Update the term  frequencies as a term is encountered, creating new keys in the dictionary as newer
+terms are encountered.
+
+3c) Using the term frequencies, compute the tf values for every term and then compute the document
+vector lengths which will be used for computing document scores in the Vector Space Model. 
+Vector lengths we calculated by taking the square root of the sum of the squares of the tf values
+for a document. Vector lengths are stored in a python dicitonary with the keys being the document ids.
 
 3) Then, add approximately sqrt(document_frequency) evenly spaced skip pointers
-to every postings list in the postings, in the form of an index to a document_id to its right,
+to every postings list in the postings, in the form of a list index to a document_id to its right,
 accompanying the select Document Ids. Document Ids with skip pointers will be tuples
-of the form: (document_id, skip_index). This way, an entire posting list can be loaded as a python list
+of the form: (document_id, term_frequency,  skip_index). This way, an entire posting list can be loaded as a python list
 when searching and skips will be performed by accessing the element in the list at the specified skip index.
 
-4) Write the list of sorted Document Ids to the top of the postings file. This will be used
+
+4) Write the list of all sorted Document Ids to the top of the postings file. This will be used
 for NOT queries.
 
 5) While writing the postings list for each term in the postings file, fill the byte_offset value of
@@ -47,6 +61,10 @@ makes finding the postings list to be loaded into the memory more efficient, dur
 6) Pickle the dictionary and write the it to the dictionary file. The entire dictionary can
 be unpickled in the memory during the search as it is relatively small compared to the postings,
 which will only be loaded list by list for every search query.
+
+7) Pickle the vector lengths dicitonary and write it to the lengths file. The dicitonary 
+can be unpickled during the search when the document score computation takes place.
+
 
 Searching Algorithm:
 ---------------------

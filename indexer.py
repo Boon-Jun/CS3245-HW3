@@ -25,8 +25,18 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 		text = text.replace('\n', ' ')
 		# tokenize
 		sentences = sent_tokenize(text)
+		
+		
+		# Replace all non-alphanum, non-space chars in each sentence with space
 		tokens = []
 		for sent in sentences:
+			new_sent = []  
+			for c in sent:
+				if c.isalnum() or c.isspace():
+					new_sent.append(c)
+				else: 
+					new_sent.append(' ')
+			sent = ''.join(new_sent)
 			tokens.extend([token.lower() for token in word_tokenize(sent)])	
 		
 		# stem the tokens
@@ -35,12 +45,6 @@ def index(input_directory, output_file_dictionary, output_file_postings):
 		# maps every unique term in doc to its frequency
 		term_to_freq = {}
 		for term in stemmed_tokens:
-			# strip leading and trailing quotation marks in terms
-			if (term.startswith("\"") or term.startswith("'")):
-				term = term[1:]
-			if (term.endswith("\"" or term.endswith("\'"))):
-				term = term[:-1]
-			
 			if term not in dictionary:
 				dictionary[term] = (None, 1)
 				index[term] = [(doc_id, 1)]
