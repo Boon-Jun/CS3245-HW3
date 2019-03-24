@@ -124,14 +124,15 @@ feature that is typically supported in web search engines. Describe how you woul
  functionality correctly).
 
  In our opinion, one possible way to perform phrasal queries is to index the documents into
- bigrams and unigrams, and store both type of grams into the index.
+ postings for unigrams and bi-grams, and store both type of grams into the index.
  We can also extend this to higher n-grams as long as space is not an issue.
- Example: "Fight me please" will be indexed as "Fight", "me", "Fight me" etc., not
-          forgetting the stemming.
+ Example: "Fight me please" will be indexed as "Fight", "me", "Fight me" etc.
 
- To perform the search, the query string will be splitted into terms
- of unigrams and bigrams. Treating each unigram and bigram as a single term, we could
- then implement the same lnc.ltc ranking scheme and rank each document accordingly.
+ To perform the search, n-grams from the query will be first obtained. 
+ When phrasal queries are enabled we could modify the VSM such that the 
+ axes of a vector for each documents are the n-grams instead of one word. 
+ We could then implement the same lnc.ltc ranking scheme and rank each 
+ document accordingly.
 
  However, this implementation does not consider phrases that has a length
  of more than n, where n is the highest numbered n-gram stored in the index.
@@ -150,7 +151,6 @@ This means that a shorter document will much more likely to have a higher rankin
 The normalization we use is not sufficient to address this problem since it does not take into account
 the length of each document.
 
-3. Do you think zone or field parametric indices would be useful for practical search in the Reuters collection? Note: the Reuters collection does have metadata for each article but the quality of the metadata is not uniform, nor are the metadata classifications uniformly applied (some documents have it, some don't). Hint: for the next Homework #4, we will be using field metadata, so if you want to base Homework #4 on your Homework #3, you're welcomed to start support of this early (although no extra credit will be given if it's right).
 
 == Files included with this submission ==
 README.txt - This file
@@ -159,7 +159,9 @@ index.py - Required file for submission
 indexer.py - Perfoms the indexing of directory of documents.
 dictionary.txt - Pickled dictionary of terms from the Reuters Training Dataset
 postings.txt - Postings List of each term specified in dictionary.txt
-lengths.txt - Stores the document length
+postings_plaintext.txt - Contains a human readable index with dictionary word and
+			corresponding posting list
+lengths.txt - Stores a dictionary of document lengths
 search.py - Required file for submission
             Usage of search.py now slightly differs from the original due to the
 						addition of lengths.txt file
@@ -193,3 +195,4 @@ I suggest that I should be graded as follows:
 
 Forums on IVLE - Compare Search Results
 python's heapq documentation and source code - Helps us understand the nlargest method
+CS3245 lecture note 7 for the indexing and search algorithm for VSM
