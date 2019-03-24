@@ -29,5 +29,6 @@ def getVectorLength(docId, vector_lengths):
 def getTotalNumberOfDocs(postings):
     global maxLength
     if maxLength == None:
+        #Length is computed only once
         maxLength = len(getAllDocIds(postings))
     return maxLength

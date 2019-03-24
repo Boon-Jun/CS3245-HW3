@@ -18,21 +18,25 @@ def executeSearch(queryString, term_dict, postings, vector_lengths):
     queryList = queryStringToTermsList(queryString)
     scores = {}
 
+    #Some preprocessing to prepare for the calculation of query weights
     for item in queryList:
         term = item
-        #Each Term
         if term not in queryTermSet:
             queryTermSet[term] = [1, getDocFrequency(term, term_dict)]
         else:
             queryTermSet[term][0] += 1
 
     #Calculates weights for query without normalization
+    #Normalization of the queries will be excluded, Since it does not affect
+    #the overall ranking
     for term in queryTermSet:
         infoPair = queryTermSet[term]
         if infoPair[1] != 0:
             queryWeights[term] = (1 + math.log10(infoPair[0])) * (math.log10(totalNumberOfDocs/infoPair[1]))
 
-    #Calculates cosine scoring minus the normalization
+    #Calculates dot product of query length and document length(without normalization)
+    #Note that only documents that have matching stems to the query will be considered
+    #in the calculation of the dot product.
     for term in queryWeights:
         postingList = loadPostingList(term, term_dict, postings)
         for posting in postingList:
@@ -41,7 +45,7 @@ def executeSearch(queryString, term_dict, postings, vector_lengths):
                 scores[docId] = 0
             scores[docId] += queryWeights[term] * (1 + math.log10(posting[1]))
 
-    #Normalization for docIds
+    #Normalization for docIds to obtain the final score for each document
     for docId in scores:
         scores[docId] = scores[docId]/getVectorLength(docId, vector_lengths)
 
