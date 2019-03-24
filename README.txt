@@ -145,11 +145,15 @@ is the ltc.lnc scheme (n.b., not the ranking scheme you were asked to implement)
 sufficient for retrieving documents from the Reuters-21578 collection?
 
 Firstly, long queries takes a longer time to process.
-Long Documents tends to have a greater diversity of words, and each term within the long document
-will therefore have a lower score as compared to another term within a short document.
-This means that a shorter document will much more likely to have a higher ranking due to the higher score.
-The normalization we use is not sufficient to address this problem since it does not take into account
-the length of each document.
+Longer queries with a lot of words from a particular document give
+very accurate results. However, if the query is short, shorter documents might be favoured
+although normalization is done. This is due to the fact that the shorter queries often
+has limited axes of freedom for the resulting vector. Shorter documents with less diversity
+but words matching with the query will tend to have a larger consine similarity as their vectors have
+less axes of freedom similar to shorter queries. Longer documents with similar number of matching words,
+ on the other hand have more axes of freedom. This means that the presence of other axes for longer
+document vectors might "pull" the vector away from the query vector creating a larger angle between them.
+Normalization does not solve this as it does not affect the angle between the vectors.
 
 
 == Files included with this submission ==
