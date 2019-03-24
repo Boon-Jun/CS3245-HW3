@@ -1,4 +1,6 @@
-This is the README file for A0000000X-***REMOVED***'s submission
+This is the README file for ***REMOVED***-***REMOVED***'s submission
+***REMOVED***
+***REMOVED***
 
 == Python Version ==
 
@@ -180,7 +182,7 @@ search_utils.py - Commonly used utility methods for searching
 
 Please initial one of the following statements.
 
-[x] I, A0000000X-***REMOVED***, certify that I have followed the CS 3245 Information
+[x] I, ***REMOVED***X-***REMOVED***, certify that I have followed the CS 3245 Information
 Retrieval class guidelines for homework assignments.  In particular, I
 expressly vow that I have followed the Facebook rule in discussing
 with others in doing the assignment and did not take notes (digital or
