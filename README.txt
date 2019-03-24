@@ -24,15 +24,15 @@ The documents are indexed as follows:
 	ii) Apply the NLTK sentence tokenizer
 	iii) Replace all non alphanumeric characters in sentence with space. This step ensures that
 	the terms in the sentences are normalized. This has to be done as the word tokenizer fails
-	to remove unnecessary symbols from words frequently leading to reduced term frequency 
+	to remove unnecessary symbols from words frequently leading to reduced term frequency
 	of a word.
 	iv) Word Tokenize each sentece with NLTK sentence tokenizer
 	v) Case fold each token
 	vi) Apply the NLTK Porter Stemmer
 
 3a) For each term, if the term is new, add the term to the dictionary and the postings.
-Then add the occuring Document Id (if it has not already been added) and Term frequency 
- into the corresponding postings list in the postings and update the document frequency 
+Then add the occuring Document Id (if it has not already been added) and Term frequency
+ into the corresponding postings list in the postings and update the document frequency
 in the dictionary.
 
 3b) Keep track of the term frequency of every term in the document with a python dictionary.
@@ -40,7 +40,7 @@ Update the term  frequencies as a term is encountered, creating new keys in the 
 terms are encountered.
 
 3c) Using the term frequencies, compute the tf values for every term and then compute the document
-vector lengths which will be used for computing document scores in the Vector Space Model. 
+vector lengths which will be used for computing document scores in the Vector Space Model.
 Vector lengths we calculated by taking the square root of the sum of the squares of the tf values
 for a document. Vector lengths are stored in a python dicitonary with the keys being the document ids.
 
@@ -62,7 +62,7 @@ makes finding the postings list to be loaded into the memory more efficient, dur
 be unpickled in the memory during the search as it is relatively small compared to the postings,
 which will only be loaded list by list for every search query.
 
-7) Pickle the vector lengths dicitonary and write it to the lengths file. The dicitonary 
+7) Pickle the vector lengths dicitonary and write it to the lengths file. The dicitonary
 can be unpickled during the search when the document score computation takes place.
 
 
@@ -71,9 +71,9 @@ Searching Algorithm:
 Note: There are some changes to how search.py is used. Refer to the section under
       'Files included with this submission' for more details
 
-Before the documents are being ranked, the query string will be split and then stemmed
-with PorterStemmer. The leading and trailing quotation marks is then removed
-from each stemmed term as this was how terms were processed during indexing.
+Before the documents are being ranked, all non alphanumeric characters in the query
+string will be replaced with a space before tokenizing it and stemming it with
+PorterStemmer. This is similar to how the the words in the documents are indexed.
 
 The documents will then be ranked according to the lnc.ltc ranking scheme.
 That is to say that the weights of each term in the document will be calculated as :
@@ -105,7 +105,7 @@ How the nlargest method selects the top 10 ranked documents:
 
 Since there is a total of N documents and a heap of size 10, there will be an upperbound
 of N additions and N removals. Therefore, the time complexity to retrieve the top
-N documents is O(NLog10)
+10 documents is O(NLog10)
 
 After the top 10(or lesser) documents are retrieved, the document Ids are then
 sorted in order of decreasing score and then by order of increasing document Ids
@@ -126,17 +126,17 @@ feature that is typically supported in web search engines. Describe how you woul
  In our opinion, one possible way to perform phrasal queries is to index the documents into
  postings for unigrams and bi-grams, and store both type of grams into the index.
  We can also extend this to higher n-grams as long as space is not an issue.
- Example: "Fight me please" will be indexed as "Fight", "me", "Fight me" etc.
+ Example: "Fight me please" will be indexed as "Fight", "me", "Fight me", "me please"
+ etc.
 
- To perform the search, n-grams from the query will be first obtained. 
- When phrasal queries are enabled we could modify the VSM such that the 
- axes of a vector for each documents are the n-grams instead of one word. 
- We could then implement the same lnc.ltc ranking scheme and rank each 
+ To perform the search, n-grams from the query will be first obtained.
+ When phrasal queries are enabled we could modify the VSM such that the
+ axes of a vector for each documents includes the n-grams along with the unigrams.
+ We could then implement the same lnc.ltc ranking scheme and rank each
  document accordingly.
 
  However, this implementation does not consider phrases that has a length
  of more than n, where n is the highest numbered n-gram stored in the index.
-
 
 2. Describe how your search engine reacts to long documents and long queries as
 compared to short documents and queries. Is the normalization you use sufficient
@@ -144,7 +144,7 @@ to address the problems (see Section 6.4.4 for a hint)? In your judgement,
 is the ltc.lnc scheme (n.b., not the ranking scheme you were asked to implement)
 sufficient for retrieving documents from the Reuters-21578 collection?
 
-Firstly, long queries takes a longer time to proces.
+Firstly, long queries takes a longer time to process.
 Long Documents tends to have a greater diversity of words, and each term within the long document
 will therefore have a lower score as compared to another term within a short document.
 This means that a shorter document will much more likely to have a higher ranking due to the higher score.
